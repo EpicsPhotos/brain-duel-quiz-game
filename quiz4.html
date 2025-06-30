@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Niveau 4</title>
+<style>
+
+h1 {
+  font-size: 2.5rem;
+  color: white;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+}
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 2rem;
+      background-image: url('background.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 100vh;
+      margin: 0;
+    }
+    button {
+      font-size: 1.2rem;
+      padding: 0.7rem 1.5rem;
+      margin: 0.5rem;
+      cursor: pointer;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 1rem 0;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-5px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+      100% { transform: translateX(0); }
+    }
+    .shake {
+      animation: shake 0.5s ease;
+    }
+    @keyframes fireworks {
+      0% { transform: scale(0); opacity: 1; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    .firework {
+      position: fixed;
+      width: 30px;
+      height: 30px;
+      background: radial-gradient(circle, #ff0, #f00);
+      border-radius: 50%;
+      animation: fireworks 0.8s ease-out;
+      pointer-events: none;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body><h1>Niveau 4</h1>
+<h2>Je commence la nuit et finis le matin. Qui suis-je ?</h2>
+<img src="enigme.png" style="max-width: 100%; margin-top: 10px;"/>
+<div id="chrono-container" style="position: fixed; top: 10px; left: 10px; width: 300px; height: 25px; background: #333; border-radius: 5px; overflow: hidden; z-index: 1000;">
+<div id="chrono-bar" style="height: 100%; width: 100%; background: #e74c3c;"></div>
+</div>
+<ul>
+<li><button>Le sommeil</button></li>
+<li><button>Le rêve</button></li>
+<li><button>L’étoile</button></li>
+<li><button>L’ombre</button></li>
+</ul>
+<script>
+    let timeLeft = 20;
+    const bar = document.getElementById("chrono-bar");
+    const tickSound = new Audio("tick.mp3");
+    const timeoutSound = new Audio("timeout.mp3");
+    const interval = setInterval(() => {
+      if (timeLeft <= 0) {
+        clearInterval(interval);
+        timeoutSound.play();
+        
+        
+        return;
+      }
+      timeLeft--;
+      bar.style.width = (timeLeft * 5) + "%";
+      tickSound.play();
+      if (timeLeft === 5) {
+        document.body.classList.add("shake");
+        setTimeout(() => document.body.classList.remove("shake"), 500);
+        bar.style.background = "#f1c40f";
+      }
+    }, 1000);
+  </script>
+<script>
+    const successSound = new Audio("success.mp3");
+    function showVictoryEffect() {
+      for (let i = 0; i < 10; i++) {
+        const firework = document.createElement("div");
+        firework.className = "firework";
+        firework.style.top = Math.random() * 80 + 10 + "%";
+        firework.style.left = Math.random() * 80 + 10 + "%";
+        document.body.appendChild(firework);
+        setTimeout(() => firework.remove(), 800);
+      }
+      successSound.play();
+    }
+  </script>
+<script>
+    const buttons = document.querySelectorAll("button");
+    const errorSound = new Audio("wrong.mp3");
+    buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            if (btn.textContent.trim() === "Le sommeil") {
+                showVictoryEffect();
+                setTimeout(() => {
+                    window.location.href = "quiz5.html";
+                }, 1000);
+            } else {
+                errorSound.play();
+                alert("❌ Mauvaise réponse. Réessayez.");
+            }
+        });
+    });
+    </script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    let chrono = document.getElementById("chrono");
+    if (!chrono) return;
+
+    const delay = parseInt(chrono.textContent) || 10;
+    setTimeout(() => {
+        let checked = document.querySelector("input[type='radio']:checked");
+        if (!checked) {
+            alert("⏳😢 Oups... Vous n'avez pas réussi à répondre dans le temps alloué. Veuillez être plus rapide la prochaine fois.");
+            window.location.href = "quiz5.html";
+        }
+    }, delay * 1000 + 500);
+});
+</script>
+
+
+<audio id="fail-sound" src="assets/fail.mp3" preload="auto"></audio>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    let chrono = document.getElementById("chrono");
+    if (!chrono) return;
+
+    const delay = parseInt(chrono.textContent) || 10;
+    setTimeout(() => {
+        let checked = document.querySelector("input[type='radio']:checked");
+        if (!checked) {
+            const audio = document.getElementById("fail-sound");
+            if (audio) audio.play();
+            setTimeout(() => {
+                alert("⏳😢 Oups... Vous n'avez pas réussi à répondre dans le temps alloué. Veuillez être plus rapide la prochaine fois.");
+                window.location.href = "quiz5.html";
+            }, 500);
+        }
+    }, delay * 1000 + 500);
+});
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    let timeLeft = 20;
+    let hasAnswered = false;
+    const bar = document.getElementById("chrono-bar");
+    const timeoutSound = new Audio("assets/fail.mp3");
+
+    // Marquer une réponse donnée
+    document.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+            hasAnswered = true;
+        });
+    });
+
+    const interval = setInterval(() => {
+        if (timeLeft <= 0) {
+            clearInterval(interval);
+            if (!hasAnswered) {
+                timeoutSound.play();
+                setTimeout(() => {
+                    alert("⏳😢 Oups... Vous n'avez pas réussi à répondre dans le temps alloué. Veuillez être plus rapide la prochaine fois.");
+                    window.location.href = "quiz5.html";
+                }, 500);
+            }
+            return;
+        }
+        timeLeft--;
+        if (bar) {
+            bar.style.width = (timeLeft * 5) + "%";
+            if (timeLeft === 5) {
+                document.body.classList.add("shake");
+                setTimeout(() => document.body.classList.remove("shake"), 500);
+                bar.style.background = "#f1c40f";
+            }
+        }
+    }, 1000);
+});
+</script>
+
+</body>
+</html>

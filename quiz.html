@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Brain Duel - Commencer le quiz</title>
+  <style>
+    body {
+      background-image: url('background.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+    h1 {
+      color: #ffffff;
+      font-size: 2rem;
+    }
+    p {
+      color: #ffffff;
+      font-size: 1.1rem;
+      margin-top: 1rem;
+    }
+    .start-btn {
+      margin-top: 2rem;
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      background-color: #1877f2;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .start-btn:hover {
+      background-color: #145dbf;
+    }
+  </style>
+
+<style>
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+.shake {
+  animation: shake 0.5s ease;
+}
+</style>
+
+
+<style>
+@keyframes fireworks {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+.firework {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, #ff0, #f00);
+  border-radius: 50%;
+  animation: fireworks 0.8s ease-out;
+  pointer-events: none;
+  z-index: 9999;
+}
+</style>
+
+</head>
+<body>
+
+
+</div>
+
+  <h1>Bienvenue dans Brain Duel !</h1>
+  <p>Prépare-toi à résoudre les énigmes les plus folles…</p>
+  <button class="start-btn" onclick="window.location.href='quiz1.html'">Commencer</button>
+
+
+
+
+<script>
+const successSound = new Audio("success.mp3");
+function showVictoryEffect() {
+  for (let i = 0; i < 10; i++) {
+    const firework = document.createElement("div");
+    firework.className = "firework";
+    firework.style.top = Math.random() * 80 + 10 + "%";
+    firework.style.left = Math.random() * 80 + 10 + "%";
+    document.body.appendChild(firework);
+    setTimeout(() => firework.remove(), 800);
+  }
+  successSound.play();
+}
+</script>
+
+</body>
+</html>

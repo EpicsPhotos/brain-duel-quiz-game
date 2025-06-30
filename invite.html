@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inviter des amis</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: url('background.png') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+  }
+  .container {
+    background-color: rgba(0, 0, 0, 0.7);
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  td {
+    padding: 10px;
+  }
+  input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+  }
+  .center {
+    text-align: center;
+    margin: 15px 0;
+  }
+  button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin: 5px;
+    background-color: #00aaff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  button:hover {
+    background-color: #0077cc;
+  }
+  #mode {
+    font-weight: bold;
+    margin-left: 10px;
+  }
+
+  .return-button {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .return-button:hover {
+    background-color: #1976D2;
+  }
+
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Inviter des amis</h1>
+  <div class="center">
+    
+  </div>
+  <form onsubmit="envoyerInvitations(); return false;">
+    
+<table id="contactsTable">
+  <tr><td><input type="text" placeholder="Numéro de mobile" value="+1" onclick="choisirContact(this)"/></td></tr>
+  <tr><td><input type="text" placeholder="Numéro de mobile" onclick="choisirContact(this)"/></td></tr>
+  <tr><td><input type="text" placeholder="Numéro de mobile" onclick="choisirContact(this)"/></td></tr>
+</table>
+
+    <div class="center">
+      <button type="button" onclick="ajouterLigne()">➕ Ajouter une ligne</button>
+      <button type="button" onclick="supprimerLigne()">➖ Supprimer une ligne</button>
+    </div>
+    <div class="center">
+      <button type="submit">📤 Envoyer les invitations</button>
+    </div>
+  </form>
+
+  
+  <script>
+    let mode = "SMS";
+    function switchMode() {
+      mode = (mode === "SMS") ? "Courriel" : "SMS";
+      document.getElementById("mode").textContent = (mode === "SMS") ? "Numéro de mobile" : "Adresse courriel";
+      const inputs = document.querySelectorAll("#contactsTable input");
+      inputs.forEach((input, index) => {
+        input.placeholder = (mode === "SMS") ? "Numéro de mobile" : "Adresse courriel";
+        if (mode === "Courriel" && input.value === "+1") {
+          input.value = "";
+        } else if (mode === "SMS" && index === 0 && input.value.trim() === "") {
+          input.value = "+1";
+        }
+      });
+    }
+
+    function ajouterLigne() {
+      const table = document.getElementById("contactsTable");
+      const newRow = table.insertRow();
+      const newCell = newRow.insertCell(0);
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = (mode === "SMS") ? "Numéro de mobile" : "Adresse courriel";
+      newCell.appendChild(input);
+    }
+
+    function supprimerLigne() {
+      const table = document.getElementById("contactsTable");
+      if (table.rows.length > 1) {
+        table.deleteRow(-1);
+      }
+    }
+
+    
+    function envoyerInvitations() {
+      const inputs = document.querySelectorAll("#contactsTable input");
+      const contacts = [];
+
+      inputs.forEach(input => {
+        const val = input.value.trim();
+        if (val !== "" && mode === "SMS") {
+          contacts.push(val);
+        }
+      });
+
+      if (mode === "SMS") {
+        if (contacts.length === 0) {
+          alert("Veuillez entrer au moins un numéro pour envoyer une invitation.");
+          return;
+        }
+
+        const message = encodeURIComponent("Viens me défier dans Brain Duel ! Déconnecte ta logique avec ce jeu qui rend fou... Oses-tu relever le défi ? https://brain-duel-game.onrender.com");
+
+        contacts.forEach(number => {
+          const smsLink = `sms:${number}?body=${message}`;
+          window.open(smsLink, "_blank");
+        });
+
+        alert("✅ Invitations par SMS préparées. Vérifiez votre application Messages.");
+        window.location.href = "index.html";
+      } else {
+        alert("Les invitations par courriel ne sont pas encore disponibles.");
+      }
+    }
+
+  
+    async function choisirContact(inputElement) {
+      if ('contacts' in navigator && 'ContactsManager' in window) {
+        try {
+          const props = ['tel'];
+          const opts = { multiple: false };
+          const contacts = await navigator.contacts.select(props, opts);
+          if (contacts.length > 0 && contacts[0].tel.length > 0) {
+            inputElement.value = contacts[0].tel[0];
+          }
+        } catch (err) {
+          console.log("Accès aux contacts refusé ou non supporté", err);
+        }
+      }
+    }
+
+</script>
+
+</div>
+
+<div class="center">
+  <button onclick="window.location.href='index.html'" class="return-button">Retour à la page de connexion</button>
+</div>
+
+</body>
+</html>
